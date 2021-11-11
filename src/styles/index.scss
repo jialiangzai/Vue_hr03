@@ -65,3 +65,8 @@ div:focus {
 .app-container {
   padding: 20px;
 }
+// 进度条
+#nprogress .bar {
+  background: rgb(23, 117, 124) !important;
+  height: 6px !important;
+}

@@ -1,8 +1,39 @@
+
+// cookie存储
+import * as auth from '@/utils/auth'
+// 后台调用api
+import { login } from '@/api/user'
 export default {
   namespaced: true,
-  state: {},
-  mutations: {},
-  actions: {}
+  state: {
+    // token
+    token: auth.getToken() || null
+  },
+  mutations: {
+    // 同步业务逻辑
+    // 存储
+    setToken (state, token) {
+      state.token = token
+      auth.setToken(token)
+    },
+    // 删除
+    delToken (state) {
+      state.token = null
+      auth.removeToken()
+    }
+  },
+  actions: {
+    // 异步的请求接口去获取token
+    /**
+     *
+     * @param {*} param0
+     * @param {*} payload 调用接口传递的参数 手机号和密码
+     */
+    async getTokenAction ({ commit }, payload) {
+      const token = await login(payload)
+      commit('setToken', token)
+    }
+  }
 }
 
 // import { login, logout, getInfo } from '@/api/user'

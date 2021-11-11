@@ -1,7 +1,40 @@
-// import router from './router'
-// import store from './store'
-// import { Message } from 'element-ui'
-// import NProgress from 'nprogress' // progress bar
+import router from '@/router'
+import store from '@/store'
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css' // progress bar style
+const whiteList = ['/login', '/404'] // 定义白名单  所有不受权限控制的页面
+/**
+ * 有token
+ * 1.访问的是否登录页
+ * 2.跳转主页  放行
+ * 无token
+ * 1. 是否访问的是白名单页
+ * 2. 跳转登录页 放行
+ */
+router.beforeEach((to, from, next) => {
+  // 开启滚动条
+  NProgress.start()
+  if (store.getters.token) {
+    // 有token
+    if (to.path === '/login') {
+      // 暗意：登录了就不会让你访问登录页
+      next('/')
+    } else {
+      // 有token且访问的不是登录页此时已经有token进行下一步操作
+      next()
+    }
+  } else {
+    // 无token
+    if (whiteList.includes(to.path)) {
+      next()
+    } else {
+      next('/login')
+    }
+  }
+  // 关闭进度条
+  NProgress.done()
+})
+
 // import 'nprogress/nprogress.css' // progress bar style
 // import { getToken } from '@/utils/auth' // get token from cookie
 // import getPageTitle from '@/utils/get-page-title'
@@ -39,7 +72,7 @@
 //           // remove token and go to login page to re-login
 //           await store.dispatch('user/resetToken')
 //           Message.error(error || 'Has Error')
-//           next(`/login?redirect=${to.path}`)
+//           next(`/ login ? redirect = ${ to.path }`)
 //           NProgress.done()
 //         }
 //       }
@@ -52,7 +85,7 @@
 //       next()
 //     } else {
 //       // other pages that do not have permission to access are redirected to the login page.
-//       next(`/login?redirect=${to.path}`)
+//       next(`/ login ? redirect = ${ to.path }`)
 //       NProgress.done()
 //     }
 //   }
