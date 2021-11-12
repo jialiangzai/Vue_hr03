@@ -29,13 +29,24 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
+  // 服务器配置
   devServer: {
     port: port,
     open: true,
     overlay: {
       warnings: false,
       errors: true
+    },
+    proxy: {
+      '^/api': {
+        target: 'http://8.142.65.7:3000',
+        changeOrigin: true// 默认为true
+        /** 可选 ----服务器端也是请求路径有固定前缀
+         * pathReWrite:{'^/api':''}
+         */
+      }
     }
+
     // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
