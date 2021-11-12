@@ -6,7 +6,7 @@ export default {
     {
       path: '',
       name: 'setting', // 权限的标识
-      component: () => import('@/router/modules/setting'),
+      component: () => import('@/views/setting'),
       meta: {
         title: '公司设置',
         icon: 'setting'

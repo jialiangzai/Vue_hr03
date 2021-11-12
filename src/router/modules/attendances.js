@@ -6,7 +6,7 @@ export default {
     {
       path: '',
       name: 'attendances', // 权限的标识
-      component: () => import('@/router/modules/attendances'),
+      component: () => import('@/views/attendances'),
       meta: {
         title: '考勤',
         icon: 'skill'

@@ -6,7 +6,7 @@ export default {
     {
       path: '',
       name: 'employees', // 权限的标识
-      component: () => import('@/router/modules/employees'),
+      component: () => import('@/views/employees'),
       meta: {
         title: '员工管理',
         icon: 'people'

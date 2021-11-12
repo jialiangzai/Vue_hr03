@@ -6,7 +6,7 @@ export default {
     {
       path: '',
       name: 'approvals', // 权限的标识
-      component: () => import('@/router/modules/approvals'),
+      component: () => import('@/views/approvals'),
       meta: {
         title: '审批',
         icon: 'tree-table'

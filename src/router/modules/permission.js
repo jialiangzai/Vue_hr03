@@ -6,7 +6,7 @@ export default {
     {
       path: '',
       name: 'permission', // 权限的标识
-      component: () => import('@/router/modules/permission'),
+      component: () => import('@/views/permission'),
       meta: {
         title: '权限管理',
         icon: 'lock'

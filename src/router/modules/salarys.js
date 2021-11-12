@@ -6,7 +6,7 @@ export default {
     {
       path: '',
       name: 'salarys', // 权限的标识
-      component: () => import('@/router/modules/salarys'),
+      component: () => import('@/views/salarys'),
       meta: {
         title: '工资',
         icon: 'money'

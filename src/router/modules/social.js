@@ -6,7 +6,7 @@ export default {
     {
       path: '',
       name: 'social', // 权限的标识
-      component: () => import('@/router/modules/social'),
+      component: () => import('@/views/social'),
       meta: {
         title: '社保',
         icon: 'table'

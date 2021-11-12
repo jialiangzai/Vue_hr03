@@ -6,7 +6,8 @@ export default {
     {
       path: '',
       name: 'departments', // 权限的标识
-      component: () => import('@/router/modules/departments'),
+      component: () => import('@/views/departments'),
+
       meta: {
         title: '组织架构',
         icon: 'tree'
