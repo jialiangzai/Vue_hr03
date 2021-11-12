@@ -11,7 +11,7 @@ const whiteList = ['/login', '/404'] // 定义白名单  所有不受权限控�
  * 1. 是否访问的是白名单页
  * 2. 跳转登录页 放行
  */
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // 开启滚动条
   NProgress.start()
   if (store.getters.token) {
@@ -22,6 +22,10 @@ router.beforeEach((to, from, next) => {
     } else {
       // 有token且访问的不是登录页此时已经有token进行下一步操作
       next()
+      // 资料信息是可修改的不需要本地存储，根据本身有没有信息资料再去发请求
+      if (!store.getters.name) {
+        await store.dispatch('user/getUserInfo')
+      }
     }
   } else {
     // 无token

@@ -144,7 +144,7 @@ export default {
           // 存储完token才进行其他操作
           await this.getTokenAction(this.loginForm)
           // 跳转到首页和回跳地址
-          this.$router.replace('/')
+          this.$router.replace(this.redirect || '/')
         }
       })
     }

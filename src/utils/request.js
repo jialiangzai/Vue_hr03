@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
-
+import router from '@/router/index'
 // create an axios instance
 const request = axios.create({
   baseURL: process.env.VUE_APP_BASE_API // url = base url + request url
@@ -85,11 +85,24 @@ request.interceptors.response.use(
   error => {
     // 非200情况的报错
     console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    // 401
+    if (error.response && error.response.status === 401) {
+      if (router.currentRoute.path === '/login') return
+      store.dispatch('user/logout')
+      Message({
+        message: error.response.data.message,
+        type: 'error',
+        duration: 3 * 1000
+      })
+      // 清空本地信息
+      // 携带参数跳转登录页
+      router.replace(`/login?redirect=${router.currentRoute.path}`)
+    }
+    // Message({
+    //   message: error.message,
+    //   type: 'error',
+    //   duration: 5 * 1000
+    // })
     return Promise.reject(error)
   }
 )

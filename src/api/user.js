@@ -11,7 +11,24 @@ export function login (data) {
     data
   })
 }
-export function getInfo (token) {
+/**
+ * @description: 获取用户资料
+ * @param {*}
+ * @return {*}
+ */
+export function getUserInfo () {
+  return request({
+    url: '/sys/profile',
+    method: 'post'
+  })
 }
-export function logout () {
+/**
+ * @description: 获取用户头像
+ * @param {*} id 用户id
+ * @return {*}
+ */
+export function getUserDetailById (id) {
+  return request({
+    url: `/sys/user/${id}`
+  })
 }

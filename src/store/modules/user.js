@@ -3,11 +3,14 @@
 import * as auth from '@/utils/auth'
 // 后台调用api
 import { login } from '@/api/user'
+import { getUserInfo, getUserDetailById } from '@/api/user'
 export default {
   namespaced: true,
   state: {
     // token
-    token: auth.getToken() || null
+    token: auth.getToken() || null,
+    // 个人信息资料
+    userInfo: {}
   },
   mutations: {
     // 同步业务逻辑
@@ -20,6 +23,14 @@ export default {
     delToken (state) {
       state.token = null
       auth.removeToken()
+    },
+    // 存储用户信息资料
+    setUserInfo (state, payload) {
+      state.userInfo = payload
+    },
+    // 删除
+    reomveUserInfo (state, payload) {
+      state.userInfo = {}
     }
   },
   actions: {
@@ -27,11 +38,26 @@ export default {
     /**
      *
      * @param {*} param0
-     * @param {*} payload 调用接口传递的参数 手机号和密码
+     * @param {*} formd 调用接口传递的参数 手机号和密码
      */
-    async getTokenAction ({ commit }, payload) {
-      const token = await login(payload)
+    async getTokenAction ({ commit }, formd) {
+      const token = await login(formd)
       commit('setToken', token)
+    },
+    // 登录后获取个人用户信息资料
+    async getUserInfo ({ commit }) {
+      const res = await getUserInfo()
+      // 头像
+      const photo = await getUserDetailById(res.userId)
+      // console.log(photo)
+      // commit('setUserInfo', res)
+      commit('setUserInfo', { ...res, ...photo })
+      return res
+    },
+    // 后端没有退出接口所以要做vuex操作是异步的因为删除token和userInfo
+    logout ({ commit }) {
+      commit('delToken')
+      commit('reomveUserInfo')
     }
   }
 }
