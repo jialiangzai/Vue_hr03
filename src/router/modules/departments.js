@@ -1,0 +1,17 @@
+import Layout from '@/layout'
+export default {
+  path: '/departments',
+  component: Layout,
+  children: [
+    {
+      path: '',
+      name: 'departments', // 权限的标识
+      component: () => import('@/router/modules/departments'),
+      meta: {
+        title: '组织架构',
+        icon: 'tree'
+      }
+
+    }
+  ]
+}
