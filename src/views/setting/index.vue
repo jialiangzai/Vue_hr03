@@ -7,7 +7,12 @@
           <el-tab-pane label="角色管理">
             <!-- 新增角色按钮 -->
             <el-row style="padding: 10px 0">
-              <el-button icon="el-icon-plus" size="small" type="primary">
+              <el-button
+                icon="el-icon-plus"
+                size="small"
+                type="primary"
+                @click="showDialog = true"
+              >
                 新增角色
               </el-button>
             </el-row>
@@ -54,17 +59,54 @@
         </el-tabs>
       </el-card>
     </div>
+    <!-- 添加 -->
+    <el-dialog title="编辑弹层" :visible="showDialog" @close="close">
+      <el-form
+        ref="roleForm"
+        :model="roleForm"
+        :rules="rules"
+        label-width="100px"
+      >
+        <el-form-item label="角色名称" prop="name">
+          <el-input v-model="roleForm.name" />
+        </el-form-item>
+        <el-form-item label="角色描述" prop="description">
+          <el-input v-model="roleForm.description" />
+        </el-form-item>
+      </el-form>
+      <!-- 底部 -->
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button size="small" @click="close">取消</el-button>
+          <el-button size="small" type="primary" @click="btnOK">确定</el-button>
+        </el-col>
+      </el-row>
+      +
+    </el-dialog>
   </div>
 </template>
 <script>
-import { getRoleList, deleteRole } from '@/api/setting'
+import { getRoleList, deleteRole, addRole } from '@/api/setting'
 export default {
   data () {
     return {
       // 存储角色信息
       roleList: [],
       query: { page: 1, pagesize: 5 },
-      total: 0
+      total: 0,
+      // 新增表单
+      showDialog: false,
+      roleForm: {
+        // id不是必须
+        // id: '',
+        name: '',
+        description: ''
+
+      },
+      rules: {
+        name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],
+        description: [{ required: true, message: '角色描述不能为空', trigger: 'blur' }]
+      }
     }
   },
   mounted () {
@@ -74,7 +116,7 @@ export default {
     // 获取
     async getRoleLists () {
       const { total, rows } = await getRoleList(this.query)
-      console.log(rows)
+      // console.log(rows)
       this.roleList = rows
       this.total = total
     },
@@ -100,6 +142,29 @@ export default {
         this.getRoleLists()
       } catch (error) {
         console.log(error)
+      }
+    },
+    // 确认
+    btnOK () {
+      this.$refs.roleForm.validate(async valid => {
+        if (!valid) {
+          return
+        }
+        await addRole(this.roleForm)
+        this.$message.success('操作成功')
+        // 重新拉取数据
+        this.getRoleLists()
+        this.showDialog = false
+      })
+    },
+    // 关闭
+    close () {
+      this.showDialog = false
+      this.$refs.roleForm.resetFields()
+      // 清空表单数据
+      this.roleForm = {
+        name: '',
+        description: ''
       }
     }
   }
