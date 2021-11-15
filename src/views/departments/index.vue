@@ -18,7 +18,10 @@
                   <el-dropdown>
                     <span> 操作<i class="el-icon-arrow-down" /> </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>添加子部门</el-dropdown-item>
+                      <!-- 注意必须加()因为不加默认是事件对象,加了表示空数据但有-->
+                      <el-dropdown-item @click.native="addDept()">
+                        添加子部门
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </el-col>
@@ -54,9 +57,13 @@
                         <span> 操作<i class="el-icon-arrow-down" /> </span>
                         <!-- 下拉菜单 -->
                         <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item>添加子部门</el-dropdown-item>
+                          <el-dropdown-item @click.native="addDept(data)">
+                            添加子部门
+                          </el-dropdown-item>
                           <el-dropdown-item>编辑部门</el-dropdown-item>
-                          <el-dropdown-item>删除部门</el-dropdown-item>
+                          <el-dropdown-item @click.native="delDep(data)">
+                            删除部门
+                          </el-dropdown-item>
                         </el-dropdown-menu>
                       </el-dropdown>
                     </el-col>
@@ -68,42 +75,55 @@
         </div>
       </el-card>
     </div>
+    <!-- 新增 -->
+    <AddDept
+      :show-dialog="showDialog"
+      :curr-dept="currDept"
+      @update-depart="getDep"
+      @close-dialog="showDialog = $event"
+    />
   </div>
 </template>
 
 <script>
-import { getDepartments } from '@/api/departments'
+
+import { getDepartments, delDepartments } from '@/api/departments'
 import { tranListToTreeData } from '@/utils'
+import AddDept from './components/add-dept.vue'
 export default {
+  components: {
+    AddDept
+  },
   data () {
     return {
       // 依赖一份树形数据
-      list: [{
-        name: '财务部',
-        children: [
-          {
-            name: '财务核算部'
-          },
-          {
-            name: '税务核算部'
-          }
-        ]
-      }],
+      list: [],
       // 公司
       company: { name: '', manger: 'CEO' },
       // 定义树形结构的属性名
       defaultProps: {
         label: 'name',
         children: 'children'
-      }
+      },
+      // 新增窗体
+      showDialog: false,
+      // 要新增的对象
+      currDept: null
     }
   },
   created () {
     this.getDep()
   },
   methods: {
+    // 新增
+    addDept (currentDep) {
+      this.showDialog = true
+      console.log(currentDep)
+      // 存储当前操作部门数据
+      this.currDept = currentDep
+    },
     handleNodeClick (curr) {
-      console.log(curr)
+      // console.log(curr)
     },
     // 获取公司架构
     async getDep () {
@@ -114,6 +134,24 @@ export default {
       // console.table(depts)
       this.list = tranListToTreeData(depts)
       this.company.name = companyName
+    },
+    // 删除部门
+    async delDep (data) {
+      // 有子部门的提示先清空子部门
+      // console.log(data)
+      try {
+        if (data.children && data.children.length > 0) {
+          return this.$message.warning('不能直接删除父节点！')
+        }
+        await this.$confirm(`你确认要进行删除${data.name}么?`, '温馨提示')
+        await delDepartments(data.id)
+        // 删除操作成功
+        await delDepartments(data.id)
+        // 删除之后自动刷新
+        this.getDep()
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
