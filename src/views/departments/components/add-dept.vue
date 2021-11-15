@@ -65,9 +65,22 @@ export default {
     currDept: {
       type: Object,
       default: () => ({})
+    },
+    listAll: {
+      type: Array,
+      default: () => []
     }
   },
   data () {
+    // 自定义校验函数形式
+    const validateCode = (rules, value, callback) => {
+      // 遍历所有节点部门的code和输入的value比较
+      if (this.listAll.some(item => item.code === value)) {
+        callback(new Error('当前code码重复'))
+      } else {
+        callback()
+      }
+    }
     return {
       form: {
         name: '', // 部门名称
@@ -85,7 +98,9 @@ export default {
         ],
         code: [
           { required: true, message: '部门编码不能为空', trigger: 'blur' },
-          { min: 1, max: 50, trriger: ['blur', 'change'] }
+          { min: 1, max: 50, trriger: ['blur', 'change'] },
+          // 全局校验排重
+          { validator: validateCode, trigger: ['blur', 'change'] }
         ],
         manager: [
           { required: true, message: '部门编码要求1-50个字符', trigger: 'blur' }],

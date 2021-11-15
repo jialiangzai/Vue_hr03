@@ -79,6 +79,7 @@
     <AddDept
       :show-dialog="showDialog"
       :curr-dept="currDept"
+      :list-all="listAll"
       @update-depart="getDep"
       @close-dialog="showDialog = $event"
     />
@@ -108,7 +109,9 @@ export default {
       // 新增窗体
       showDialog: false,
       // 要新增的对象
-      currDept: null
+      currDept: null,
+      // 平铺的全部部门
+      listAll: []
     }
   },
   created () {
@@ -128,6 +131,8 @@ export default {
     // 获取公司架构
     async getDep () {
       const { depts, companyName } = await getDepartments()
+      // 做code所有的原始节点数据部门编码在整个模块中都不允许重复
+      this.listAll = depts
       // console.log(depts, companyName)
       // this.list = depts
       // 转换数据
