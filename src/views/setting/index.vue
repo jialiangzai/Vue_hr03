@@ -24,7 +24,13 @@
               <el-table-column label="操作">
                 <template #default="{ row }">
                   <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary">编辑</el-button>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    @click="editRole(row.id)"
+                  >
+                    编辑
+                  </el-button>
                   <el-button size="small" type="danger" @click="delRole(row)">
                     删除
                   </el-button>
@@ -86,7 +92,7 @@
   </div>
 </template>
 <script>
-import { getRoleList, deleteRole, addRole } from '@/api/setting'
+import { getRoleList, deleteRole, addRole, getRoleDetail, updateRole } from '@/api/setting'
 export default {
   data () {
     return {
@@ -150,7 +156,15 @@ export default {
         if (!valid) {
           return
         }
-        await addRole(this.roleForm)
+        // dialog新增他的数据是空的，编辑他的数据是存在的根据这个判断
+        // 判断
+        if (this.roleForm.id) {
+          // 编辑
+          await updateRole(this.roleForm)
+        } else {
+          // 新增
+          await addRole(this.roleForm)
+        }
         this.$message.success('操作成功')
         // 重新拉取数据
         this.getRoleLists()
@@ -166,6 +180,13 @@ export default {
         name: '',
         description: ''
       }
+    },
+    // 编辑
+    async editRole (id) {
+      this.showDialog = true
+      const res = await getRoleDetail(id)
+      // console.log(res)
+      this.roleForm = res
     }
   }
 }

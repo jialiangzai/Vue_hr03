@@ -33,3 +33,26 @@ export function addRole (data) {
     method: 'post'
   })
 }
+/**
+ * @description: 获取角色详情
+ * @param {*} id 角色id
+ * @return {*}
+ */
+export function getRoleDetail (id) {
+  return request({
+    url: `/sys/role/${id}`
+  })
+}
+
+/**
+ * @description: 编辑角色
+ * @param {*} data
+ * @return {*}
+ */
+export function updateRole (data) {
+  return request({
+    url: `/sys/role/${data.id}`,
+    data,
+    method: 'put'
+  })
+}
