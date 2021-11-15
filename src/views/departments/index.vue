@@ -57,10 +57,13 @@
                         <span> 操作<i class="el-icon-arrow-down" /> </span>
                         <!-- 下拉菜单 -->
                         <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item @click.native="addDept(data)">
+                          <el-dropdown-item @click.native="addDept(data, 1)">
                             添加子部门
                           </el-dropdown-item>
-                          <el-dropdown-item>编辑部门</el-dropdown-item>
+                          <!-- 共用新增组件 -->
+                          <el-dropdown-item @click.native="addDept(data, 2)">
+                            编辑部门
+                          </el-dropdown-item>
                           <el-dropdown-item @click.native="delDep(data)">
                             删除部门
                           </el-dropdown-item>
@@ -77,6 +80,7 @@
     </div>
     <!-- 新增 -->
     <AddDept
+      ref="editFoe"
       :show-dialog="showDialog"
       :curr-dept="currDept"
       :list-all="listAll"
@@ -119,11 +123,14 @@ export default {
   },
   methods: {
     // 新增
-    addDept (currentDep) {
+    addDept (currentDep, type) {
       this.showDialog = true
-      console.log(currentDep)
-      // 存储当前操作部门数据
+      // 存储当前操作部门数据 新增 dialog的form为空
       this.currDept = currentDep
+      if (type === 2) {
+        // 编辑 dialog的form为点击id对象的请求数据
+        this.$refs.editFoe.getDepart(currentDep.id)
+      }
     },
     handleNodeClick (curr) {
       // console.log(curr)

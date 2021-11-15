@@ -1,6 +1,10 @@
 <template>
   <!-- 新增部门的弹层 -->
-  <el-dialog title="新增部门" :visible="showDialog" @close="close">
+  <el-dialog
+    :title="form.id ? '编辑部门' : '新增部门'"
+    :visible="showDialog"
+    @close="close"
+  >
     <el-form ref="addForm" label-width="120px" :model="form" :rules="rules">
       <el-form-item label="部门名称" prop="name">
         <el-input
@@ -53,7 +57,7 @@
 
 <script>
 import { getEmployeeSimple } from '@/api/employees'
-import { addDepartments } from '@/api/departments'
+import { addDepartments, getDepartDetail, updateDepartments } from '@/api/departments'
 export default {
   // 需要传入一个props变量来控制 显示或者隐藏
   props: {
@@ -74,8 +78,17 @@ export default {
   data () {
     // 自定义校验函数形式
     const validateCode = (rules, value, callback) => {
-      // 遍历所有节点部门的code和输入的value比较
-      if (this.listAll.some(item => item.code === value)) {
+      // 遍历所有节点部门的code和输入的value比较 也要排除自身
+      // 抽离
+      let flag
+      if (this.form.id) {
+        // 仅限编辑
+        flag = this.listAll.some(item => item.code === value && value !== this.currDept.code)
+      } else {
+        flag = this.listAll.some(item => item.code === value)
+      }
+      // 遍历所有部门数据匹配
+      if (flag) {
         callback(new Error('当前code码重复'))
       } else {
         callback()
@@ -117,6 +130,11 @@ export default {
   },
 
   methods: {
+    // 编辑
+    async getDepart (id) {
+      const data = await getDepartDetail(id)
+      this.form = data
+    },
     close () {
       this.$emit('close-dialog', false)
       // 清空数据和状态
@@ -137,12 +155,18 @@ export default {
       this.$refs.addForm.validate(async valid => {
         if (!valid) {
           return
+        } else if (this.form.id) {
+          // 编辑
+          await updateDepartments(this.form)
+          this.$message.success('更新成功')
+        } else {
+          // 新增
+          // 表示可以提交了 || 顶级部门pid传空（公司下）
+          await addDepartments({ ...this.form, pid: this.currDept.id || '' })
+          this.$message.success('新增成功')
         }
-        // 表示可以提交了 || 顶级部门pid传空（公司下）
-        await addDepartments({ ...this.form, pid: this.currDept.id || '' })
         // 更新列表
         this.$emit('update-depart')
-        this.$message.success('新增成功')
         this.$emit('close-dialog')
       })
     }
