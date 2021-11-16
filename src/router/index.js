@@ -78,7 +78,19 @@ export const constantRoutes = [
       meta: { title: '首页', icon: 'dashboard' }
     }]
   },
-
+  // 静态路由导入excel
+  // { path: 'import', hidden: true, component: () => import('@/views/import') },
+  {
+    path: '/import',
+    hidden: true, // 不显示到左侧 不参与遍历
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/import')
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
