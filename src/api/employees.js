@@ -35,3 +35,15 @@ export function delEmployee (id) {
     url: `/sys/user/${id}`
   })
 }
+/**
+ * @description: 添加员工
+ * @param {*} data
+ * @return {*}
+ */
+export function addEmployee (data) {
+  return request({
+    method: 'post',
+    url: '/sys/user',
+    data
+  })
+}

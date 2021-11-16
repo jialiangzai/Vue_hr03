@@ -85,7 +85,11 @@
       </el-card>
     </div>
     <!-- 新增员工对话框 -->
-    <AddForm :show-dialog="showDialog" @close-dialog="closeDialog" />
+    <AddForm
+      :show-dialog="showDialog"
+      @close-dialog="closeDialog"
+      @updateList="getList"
+    />
   </div>
 </template>
 <script>
