@@ -12,7 +12,9 @@
             <template #right>
               <el-button type="warning" size="small">导入excel</el-button>
               <el-button type="danger" size="small">导出excel</el-button>
-              <el-button type="primary" size="small">新增员工</el-button>
+              <el-button type="primary" size="small" @click="showDialog = true">
+                新增员工
+              </el-button>
             </template>
           </PageTools>
         </div>
@@ -47,10 +49,16 @@
               ></el-switch>
             </el-table-column>
             <el-table-column label="操作" fixed="right" width="280">
-              <template>
+              <template #default="{ row }">
                 <el-button type="text" size="small">查看</el-button>
                 <el-button type="text" size="small">分配角色</el-button>
-                <el-button type="text" size="small">删除</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="hDelEmployee(row.id)"
+                >
+                  删除
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -76,12 +84,15 @@
         </div>
       </el-card>
     </div>
+    <!-- 新增员工对话框 -->
+    <AddForm :show-dialog="showDialog" @close-dialog="closeDialog" />
   </div>
 </template>
 <script>
-import { getEmployeeList } from '@/api/employees'
+import { getEmployeeList, delEmployee } from '@/api/employees'
 // 引入聘用形式的枚举
 import EmployeeEnum from '@/api/constant/employees'
+import AddForm from './components/add-employee.vue'
 import dayjs from 'dayjs'
 // import PageTools from '@/components/PageTools'
 // export default {
@@ -90,6 +101,9 @@ import dayjs from 'dayjs'
 //   }
 // }
 export default {
+  components: {
+    AddForm
+  },
   data () {
     return {
       list: [],
@@ -101,13 +115,42 @@ export default {
       // 展示状态
       qys: true,
       // 枚举
-      EmployeeEnum
+      EmployeeEnum,
+      // 子组件对话框
+      showDialog: false
     }
   },
   mounted () {
     this.getList()
   },
   methods: {
+    // 关闭新增
+    closeDialog () {
+      this.showDialog = false
+    },
+    // 删除
+    async hDelEmployee (id) {
+      // 清空最后一页页码正常但是数据不对
+      try {
+        await this.$confirm('你确认要删除么?', '温馨提示')
+        // 清空最后一页拿到最新的页数
+        // 总数/每页条数=页数-1 如果除不尽就要向上取整
+        const newPage = Math.ceil((this.total - 1) / this.query.size)
+        // 和之前页数对比 =》如果大于最新，重新赋值
+        if (this.query.page > newPage) {
+          // 发送的请求是清空之前的页码
+          this.query.page = newPage
+          await delEmployee(id)
+        } else {
+          // 正常的删除
+          await delEmployee(id)
+        }
+        this.$message.success('删除员工成功')
+        this.getList()
+      } catch (error) {
+        console.log(error)
+      }
+    },
     // 格式入职时间
     formatDate (value, str = 'YYYY-MM-DD') {
       return dayjs(value).format(str)
