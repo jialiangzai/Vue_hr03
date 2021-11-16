@@ -145,6 +145,7 @@ export default {
         await deleteRole(data.id)
         this.$message.success('删除角色成功')
         // 刷新
+        this.query.page = 1
         this.getRoleLists()
       } catch (error) {
         console.log(error)
@@ -166,6 +167,7 @@ export default {
           await addRole(this.roleForm)
         }
         this.$message.success('操作成功')
+        this.query.page = 1
         // 重新拉取数据
         this.getRoleLists()
         this.showDialog = false
