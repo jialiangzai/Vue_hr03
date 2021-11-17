@@ -17,7 +17,9 @@
               >
                 导入excel
               </el-button>
-              <el-button type="danger" size="small">导出excel</el-button>
+              <el-button type="danger" size="small" @click="handleDownload">
+                导出excel
+              </el-button>
               <el-button type="primary" size="small" @click="showDialog = true">
                 新增员工
               </el-button>
@@ -130,10 +132,99 @@ export default {
       showDialog: false
     }
   },
-  mounted () {
+  created () {
     this.getList()
   },
   methods: {
+    // 导出单页数据excel
+    async handleDownload () {
+      this.downloadLoading = true
+      // import('@/vendor/Export2Excel').then(excel => {
+      //   const tHeader = ['Id', 'Title', 'Author', 'Readings', 'Date']
+      //   const filterVal = ['id', 'title', 'author', 'pageviews', 'display_time']
+      //   const list = this.list
+      //   const data = this.formatJson(filterVal, list)
+      //   excel.export_json_to_excel({
+      //     header: tHeader,
+      //     data,
+      //     filename: this.filename,
+      //     autoWidth: this.autoWidth,
+      //     bookType: this.bookType
+      //   })
+      //   this.downloadLoading = false
+      // })
+      // 懒加载js模块导入功能  excel是对象有两个函数默认导出
+      const excel = await import('@/vendor/Export2Excel')
+      // excel.export_json_to_excel({
+      //   // 表头 必填
+      //   header: ['姓名', '工资'],
+      //   // 表头对应的具体数据 必填
+      //   data: [
+      //     ['刘备', 100],
+      //     ['关羽', 500]
+      //   ],
+      //   // 表文件配置
+      //   filename: `Excel${Date.now()}`, // 导出下载的文件名称
+      //   autoWidth: true, // 导出excel列宽度是否自适应
+      //   bookType: 'xlsx' // 导出生成的文件类型
+      // })//以上均为测试
+      // 映射关系 做表头 过滤指定数据字段
+      const header = {
+        '手机号': 'mobile',
+        '姓名': 'username',
+        '入职日期': 'timeOfEntry',
+        '聘用形式': 'formOfEmployment',
+        '工号': 'workNumber',
+        '转正日期': 'correctionTime',
+        '部门': 'departmentName'
+      }
+      // 数组
+      const newHeader = Object.keys(header)
+      // 过滤
+      const newData = Object.values(header)
+      // 转二维数组存储到excel中
+      const nwList = this.transformArray(this.list, newData)
+      excel.export_json_to_excel({
+        header: newHeader,
+        data: nwList,
+        filename: `Excel${Date.now()}`,
+        autoWidth: true,
+        bookType: 'xlsx'
+      })
+      this.downloadLoading = false
+    },
+    // 一维数组转二维数组
+    /**
+     * [{},{},{}……]====》[[],[],[]……]
+     * 准备存储结果的数组
+     * 遍历取到每个员工对象 并创建新数组存储为每个员工对象的指定属性值
+     * 根据map映射关系 去遍历赋值
+     * push到每个成员中
+     * push到最终的结果newSecond
+     */
+    transformArray (list, newData) {
+      const newSecond = []
+      list.forEach(item => {
+        // item是对象格式键为英文
+        // 创建新的数组存储每个成员
+        const newItem = []
+        for (const key in item) {
+          // 值是不变的
+          // 指定字段
+          if (newData.includes(key)) {
+            // 聘用格式
+            if (key === 'formOfEmployment') {
+              newItem.push(this._formatEmployment(item[key]))
+            } else {
+              newItem.push(item[key])
+            }
+          }
+        }
+        newSecond.push(newItem)
+      })
+      return newSecond
+    },
+
     // 关闭新增
     closeDialog () {
       this.showDialog = false
@@ -193,9 +284,9 @@ export default {
       this.query.page = newPage
       this.getList()
     }
-
   }
 }
+
 </script>
 
 <style lang="scss" scoped>

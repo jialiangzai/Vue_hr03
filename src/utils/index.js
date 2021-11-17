@@ -165,7 +165,7 @@ export function tranListToTreeData (list) {
 export function formatExcelDate (numb, format) {
   // 天数
   const time = new Date((numb - 1) * 24 * 3600000 + 1)
-  console.log(time)
+  // console.log(time)
   time.setYear(time.getFullYear() - 70)
   const year = time.getFullYear() + ''
   const month = time.getMonth() + 1 + ''
