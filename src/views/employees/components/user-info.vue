@@ -50,6 +50,7 @@
   </div>
 </template>
 <script>
+
 import { saveUserDetailById } from '@/api/employees'
 export default {
   props: {
