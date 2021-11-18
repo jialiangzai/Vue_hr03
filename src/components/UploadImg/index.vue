@@ -15,7 +15,7 @@
     :http-request="uploadImg"
   >
     <!-- 默认插槽=》 默认显示+号图标=》上传有图片了=》就显示上传图片-->
-    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+    <img v-if="userInfoAvatar" :src="userInfoAvatar" class="avatar" />
     <!-- 进度条 -->
     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
     <el-progress
@@ -36,6 +36,13 @@ const cos = new COS({
 })
 export default {
   name: 'UploadImg',
+  props: {
+    // 默认用户的头像
+    userInfoAvatar: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       //  存储云返回的图片地址
@@ -75,7 +82,8 @@ export default {
             setTimeout(() => {
               this.showPercent = false
               this.percentage = 0
-              this.imageUrl = `https://${data.Location}`
+              // this.imageUrl = `https://${data.Location}`
+              this.$emit('update:userInfoAvatar', `https://${data.Location}`)
             }, 800)
           }
         } else {

@@ -35,7 +35,7 @@
             <!-- 放置上传图片 -->
             <!-- <el-image :src="require('@/assets/common/head.jpg')"></el-image> -->
             <!-- 自定义上传头像 -->
-            <UploadImg />
+            <UploadImg :user-info-avatar.sync="userInfos.staffPhoto" />
           </el-form-item>
         </el-col>
       </el-row>
