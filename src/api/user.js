@@ -23,7 +23,7 @@ export function getUserInfo () {
   })
 }
 /**
- * @description: 获取用户头像
+ * @description: 获取用户头像\用户详情
  * @param {*} id 用户id
  * @return {*}
  */

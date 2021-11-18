@@ -12,6 +12,15 @@ export default {
         icon: 'people'
       }
 
+    },
+    // 员工详情
+    {
+      path: '/employees/detail/:id',
+      component: () => import('@/views/employees/detail'),
+      hidden: true, // 不在左侧菜单显示
+      meta: {
+        title: '员工详情'
+      }
     }
   ]
 }
