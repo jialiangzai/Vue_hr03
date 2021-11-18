@@ -38,7 +38,11 @@
             <el-table-column header-align="center" align="center" label="头像">
               <!-- 作用域插槽 -->
               <template #default="{ row }">
-                <img class="staff" :src="row.staffPhoto" />
+                <img
+                  class="staff"
+                  :src="row.staffPhoto"
+                  @click="clickShowCodeDialog(row.staffPhoto)"
+                />
               </template>
             </el-table-column>
             <el-table-column prop="username" label="姓名" />
@@ -111,9 +115,27 @@
       @close-dialog="closeDialog"
       @updateList="getList"
     />
+    <!-- 二维码显示 -->
+    <!-- 分享展示, 预览的二维码的弹层 -->
+    <el-dialog
+      width="300px"
+      title="二维码"
+      :visible="showCodeDialog"
+      @close="showCodeDialog = false"
+    >
+      <!-- 二维码 -->
+      <el-row type="flex" justify="center" align="cenrter">
+        <canvas ref="myCanvas"></canvas>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 <script>
+// 基本用法
+import QrCode from 'qrcode'
+
+// dom为一个canvas的dom对象， info为转化二维码的信息
+// QrCode.toCanvas(dom, info)
 import { getEmployeeList, delEmployee } from '@/api/employees'
 // 引入聘用形式的枚举
 import EmployeeEnum from '@/api/constant/employees'
@@ -142,13 +164,24 @@ export default {
       // 枚举
       EmployeeEnum,
       // 子组件对话框
-      showDialog: false
+      showDialog: false,
+      // 二维码
+      showCodeDialog: false
     }
   },
   created () {
     this.getList()
   },
   methods: {
+    // 二维码
+    async clickShowCodeDialog (url) {
+      if (!url) return
+      this.showCodeDialog = true
+      // 二维码是在对话框显示之前准备好的 显示对话框时用到了二维码的数据属于异步更新
+      this.$nextTick(() => {
+        QrCode.toCanvas(this.$refs.myCanvas, url)
+      })
+    },
     // 导出单页数据excel
     async handleDownload () {
       this.downloadLoading = true
