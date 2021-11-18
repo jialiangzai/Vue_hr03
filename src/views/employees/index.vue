@@ -34,6 +34,13 @@
             :default-sort="{ prop: 'workNumber', order: 'descending' }"
           >
             <el-table-column sortable type="index" label="序号" />
+            <!-- 头像显示 -->
+            <el-table-column header-align="center" align="center" label="头像">
+              <!-- 作用域插槽 -->
+              <template #default="{ row }">
+                <img class="staff" :src="row.staffPhoto" />
+              </template>
+            </el-table-column>
             <el-table-column prop="username" label="姓名" />
             <el-table-column sortable prop="workNumber" label="工号" />
             <el-table-column prop="formOfEmployment" label="聘用形式">
@@ -296,4 +303,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.employees-container {
+  .staff {
+    width: 70px;
+    height: 70px;
+    border-radius: 100%;
+  }
+}
 </style>
