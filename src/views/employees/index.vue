@@ -76,7 +76,13 @@
                 >
                   查看
                 </el-button>
-                <el-button type="text" size="small">分配角色</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="openRolesDialog(row)"
+                >
+                  分配角色
+                </el-button>
                 <el-button
                   type="text"
                   size="small"
@@ -128,6 +134,8 @@
         <canvas ref="myCanvas"></canvas>
       </el-row>
     </el-dialog>
+    <!-- 分配角色弹层组件化 -->
+    <AssRoles ref="asRole" :show-role-dialog.sync="showRoleDialog" />
   </div>
 </template>
 <script>
@@ -140,6 +148,8 @@ import { getEmployeeList, delEmployee } from '@/api/employees'
 // 引入聘用形式的枚举
 import EmployeeEnum from '@/api/constant/employees'
 import AddForm from './components/add-employee.vue'
+// 分配角色
+import AssRoles from './components/assign-role.vue'
 import dayjs from 'dayjs'
 // import PageTools from '@/components/PageTools'
 // export default {
@@ -149,7 +159,9 @@ import dayjs from 'dayjs'
 // }
 export default {
   components: {
-    AddForm
+    AddForm,
+    // 角色
+    AssRoles
   },
   data () {
     return {
@@ -166,13 +178,23 @@ export default {
       // 子组件对话框
       showDialog: false,
       // 二维码
-      showCodeDialog: false
+      showCodeDialog: false,
+      // 分配角色
+      showRoleDialog: false
     }
   },
   created () {
     this.getList()
   },
   methods: {
+    // 分配角色
+    openRolesDialog (row) {
+      console.log('当前点击的成员信息', row)
+      // 弹层打开就要执行数据回显但是dialog打开是异步的渲染dom时拿不到最新id，请求时也获取不到id，接口不传id会报错
+      // 用ref直接拿到实例调用方法
+      this.$refs.asRole.getRoleDetail(row.id)
+      this.showRoleDialog = true
+    },
     // 二维码
     async clickShowCodeDialog (url) {
       if (!url) return
