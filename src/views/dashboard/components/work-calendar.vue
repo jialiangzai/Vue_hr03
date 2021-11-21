@@ -1,7 +1,7 @@
 
 <template>
   <!-- 日历 -->
-  <el-calendar v-model="currentDate">
+  <el-calendar v-if="isShowwc" v-model="currentDate">
     <!-- 作用域插槽 -->
     <!-- date表示日期事件对象 data表示当前时间对象有3个属性 -->
     <!--
@@ -24,10 +24,32 @@
 </template>
 
 <script>
+/**
+ * 日历问题：
+ * 点击切换多语言时要刷新才会让日历组件实现
+ * 帮用户刷新，====》实际就是让这个组件销毁在重新挂载
+ * 原理 ： v-if
+ * 之所以不用v-show是因为它只是控制了元素的显示和隐藏display:none/block ；if是直接从DOM树上销毁
+ * 绑定变量存储是否挂载默认是true
+ * 监听全局对象属性$i18n.locale变化时实现===》销毁====》挂载
+ * 所谓监听变化实现某些功能是 watch的功能
+ * 注意必须完成销毁才可以重新赋值true 挂载
+ */
+// 监听多语言变化=》手动销毁日历，让他重新创建=》解决星期切换不翻译问题
 export default {
   data () {
     return {
+      isShowwc: true,
       currentDate: new Date()
+    }
+  },
+  watch: {
+    // i18n已经全局挂载
+    async '$i18n.locale' (newValue) {
+      // console.log('监控到多语言切换了：', newValue)
+      this.isShowwc = false
+      await this.$nextTick()
+      this.isShowwc = true
     }
   },
   methods: {
@@ -41,6 +63,7 @@ export default {
       return n.getDay() === 6 || n.getDay() === 0
     }
   }
+
 }
 </script>
 
