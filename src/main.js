@@ -24,7 +24,8 @@ Object.keys(directives).forEach(key => {
 // 批量注册组件
 import ComponentPlugin from '@/components/index'
 Vue.use(ComponentPlugin)
-
+import clickbtn from '@/mixin'
+Vue.mixin(clickbtn)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

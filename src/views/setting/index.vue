@@ -131,6 +131,7 @@ export default {
   },
   mounted () {
     this.getRoleLists()
+    console.log('全局混入：', this.clickbtn)
   },
   methods: {
     // 打开分配权限

@@ -1,4 +1,4 @@
-import router from '@/router'
+import router, { asyncRoutes } from '@/router'
 import store from '@/store'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
@@ -24,7 +24,18 @@ router.beforeEach(async (to, from, next) => {
       next()
       // 资料信息是可修改的不需要本地存储，根据本身有没有信息资料再去发请求
       if (!store.getters.name) {
-        await store.dispatch('user/getUserInfo')
+        const roles = await store.dispatch('user/getUserInfo')
+        // 标识
+        // roles.menus数组和动态路由表中的name匹配
+        // 过滤动态路由 ===》数组
+        const canLook = asyncRoutes.filter(item => {
+          // layout
+          return roles.menus.includes(item.children[0].name)
+        })
+        // 添加菜单渲染需要的动态路由数据
+        store.commit('routes/setmenuList', canLook)
+        // console.log(canLook)
+        router.addRoutes([...canLook, { path: '*', redirect: '/404', hidden: true }])
       }
     }
   } else {

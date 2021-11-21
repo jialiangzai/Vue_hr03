@@ -20,7 +20,13 @@
               <el-button type="danger" size="small" @click="handleDownload">
                 导出excel
               </el-button>
-              <el-button type="primary" size="small" @click="showDialog = true">
+              <!-- disabled为true时禁用 -->
+              <el-button
+                :disabled="!clickbtn('p-em-add')"
+                type="primary"
+                size="small"
+                @click="showDialog = true"
+              >
                 新增员工
               </el-button>
             </template>

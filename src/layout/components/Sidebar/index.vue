@@ -38,7 +38,9 @@ export default {
     // 拿到完整的路由表数据
     routes () {
       // console.log('路由的实例，', this.$router)可以拿到完整的路由表数据
-      return this.$router.options.routes
+      // 获取不到动态路由this.$router.options.routes
+      // return this.$router.options.routes
+      return this.$store.state.routes.menuList
     },
     activeMenu () {
       const route = this.$route

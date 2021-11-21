@@ -1,4 +1,5 @@
 
+import { resetRouter } from '@/router/index.js'
 // cookie存储
 import * as auth from '@/utils/auth'
 // 后台调用api
@@ -52,12 +53,23 @@ export default {
       // console.log(photo)
       // commit('setUserInfo', res)
       commit('setUserInfo', { ...res, ...photo })
-      return res
+      // 返回roles权限对象
+      return res.roles
     },
     // 后端没有退出接口所以要做vuex操作是异步的因为删除token和userInfo
+    /**
+       * 1. 后台退出=》调用接口
+       * 2. 前端退出=》清除本地数据
+       * 3. 重置路由（动态追加路由的缓存）
+       * 4. 清除routes模块中菜单数据，只留下静态路由
+       */
     logout ({ commit }) {
       commit('delToken')
       commit('reomveUserInfo')
+      // 重置路由系统
+      resetRouter()
+      // 重置权限路由
+      commit('routes/setmenuList', [], { root: true })
     }
   }
 }
