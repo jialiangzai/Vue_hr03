@@ -29,6 +29,9 @@ Vue.mixin(clickbtn)
 // 按需引入全局注册echarts
 import echarts from '@/utils/plugins.js'
 Vue.use(echarts)
+import i18n from '@/lang/index.js'
+// 固定写法 支i18n开发模式使用实例的方法
+Vue.use(ElementUI, { i18n: (key, value) => i18n.t(key, value) })
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -44,7 +47,7 @@ Vue.use(echarts)
 
 // set ElementUI lang to EN
 // 默认中文locale是英文
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 
@@ -54,5 +57,6 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
 })

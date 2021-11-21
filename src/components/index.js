@@ -5,7 +5,9 @@ import UploadExcel from './UploadExcel'
 import UploadImg from './UploadImg'
 // 全屏
 import ScreenFull from './ScreenFull'
-const components = [PageTools, UploadExcel, UploadImg, ScreenFull]
+// 多语言化
+import Lang from './Lang'
+const components = [PageTools, UploadExcel, UploadImg, ScreenFull, Lang]
 export default {
   install (Vue) {
     components.forEach(cp => {
