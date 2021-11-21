@@ -23,7 +23,13 @@
               <el-table-column prop="description" label="描述" />
               <el-table-column label="操作">
                 <template #default="{ row }">
-                  <el-button size="small" type="success">分配权限</el-button>
+                  <el-button
+                    size="small"
+                    type="success"
+                    @click="openPermisson(row)"
+                  >
+                    分配权限
+                  </el-button>
                   <el-button
                     size="small"
                     type="primary"
@@ -89,11 +95,17 @@
       </el-row>
       +
     </el-dialog>
+    <!-- 分配权限弹出层 -->
+    <AssginPer ref="Perass" :show-assign-dialog.sync="showAssignDialog" />
   </div>
 </template>
 <script>
 import { getRoleList, deleteRole, addRole, getRoleDetail, updateRole } from '@/api/setting'
+import AssginPer from './components/assign-perm.vue'
 export default {
+  components: {
+    AssginPer
+  },
   data () {
     return {
       // 存储角色信息
@@ -102,6 +114,8 @@ export default {
       total: 0,
       // 新增表单
       showDialog: false,
+      // 分配权限
+      showAssignDialog: false,
       roleForm: {
         // id不是必须
         // id: '',
@@ -119,6 +133,12 @@ export default {
     this.getRoleLists()
   },
   methods: {
+    // 打开分配权限
+    openPermisson (row) {
+      // console.log(row)
+      this.showAssignDialog = true
+      this.$refs.Perass.getDetail(row.id)
+    },
     // 获取
     async getRoleLists () {
       const { total, rows } = await getRoleList(this.query)
