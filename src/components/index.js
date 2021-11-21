@@ -3,7 +3,9 @@ import PageTools from './PageTools'
 import UploadExcel from './UploadExcel'
 // 头像上传
 import UploadImg from './UploadImg'
-const components = [PageTools, UploadExcel, UploadImg]
+// 全屏
+import ScreenFull from './ScreenFull'
+const components = [PageTools, UploadExcel, UploadImg, ScreenFull]
 export default {
   install (Vue) {
     components.forEach(cp => {
