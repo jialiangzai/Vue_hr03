@@ -1,7 +1,39 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
-
+// 配置排除包
+let externals = {}
+let cdn = {
+  css: [
+  ],
+  js: [
+  ]
+}
+const isProduction = process.env.NODE_ENV === 'production'
+// 如果是生产环境就去排除并引入cdn文件
+if (isProduction) {
+  // 生产环境
+  externals = {
+    'vue': 'Vue',
+    'element-ui': 'ELEMENT',
+    'xlsx': 'XLSX'
+  }
+  // cdn文件的准备
+  cdn = {
+    css: [
+      // element-ui css 样式表
+      'https://cdn.jsdelivr.net/npm/element-ui@2.13.2/lib/theme-chalk/index.css'
+    ],
+    js: [
+      // 一定要先引入vue
+      'https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js',
+      // element-ui js
+      'https://cdn.jsdelivr.net/npm/element-ui@2.13.2/lib/index.js',
+      // xlsx
+      'https://cdn.jsdelivr.net/npm/xlsx@0.16.6/dist/xlsx.full.min.js'
+    ]
+  }
+}
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
@@ -49,10 +81,18 @@ module.exports = {
 
     // before: require('./mock/mock-server.js')
   },
+  // 排除打包的大包
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
     name: name,
+    // 配置好的externals
+    // 因为已经排除了所以在main.js把饿了么组件库css也去分情况排除不然会重复引入
+    externals: externals,
+    /**
+       * externals 对象属性解析：
+       * '包名' : '模块内置对象'
+     */
     resolve: {
       alias: {
         '@': resolve('src')
@@ -70,7 +110,12 @@ module.exports = {
         include: 'initial'
       }
     ])
-
+    // 出入cdn变量(打包时候执行)
+    config.plugin('html').tap(args => {
+      // 上面定义的cdn文件===>配置cdn给插件
+      args[0].cdn = cdn
+      return args
+    })
     // when there are many pages, it will cause too many meaningless requests
     config.plugins.delete('prefetch')
 
