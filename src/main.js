@@ -26,6 +26,9 @@ import ComponentPlugin from '@/components/index'
 Vue.use(ComponentPlugin)
 import clickbtn from '@/mixin'
 Vue.mixin(clickbtn)
+// 按需引入全局注册echarts
+import echarts from '@/utils/plugins.js'
+Vue.use(echarts)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
