@@ -96,7 +96,7 @@ export const constantRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'history', // require service support
   // 滚动到顶部
   scrollBehavior: () => ({ y: 0 }),
   // 根据不同身份去访问不同页面，和静态路由合并临时合并所有的路由
